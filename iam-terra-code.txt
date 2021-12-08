@@ -1,0 +1,59 @@
+1 iam user
+
+resource "aws_iam_user" "demouser" {
+    name = "tuckerdemo"
+}
+
+
+no of iam users
+=================
+
+resource "aws_iam_user" "demo" {
+  count = 3
+  name = "tuckerdemo.${count.index}"
+}
+
+========
+resource "aws_iam_user" "demo" {
+  count = "${length(var.username)}"
+  name = "${element(var.username,count.index )}"
+}
+
+=============
+to attach policy
+=========
+resource "aws_iam_user_policy_attachment" "test-attach" {
+  user       = aws_iam_user.user.name
+  policy_arn = aws_iam_policy.policy.arn
+}
+==============
+complete code for iam user with policy
+
+resource "aws_iam_user" "user" {
+  name = "test-user"
+}
+
+resource "aws_iam_policy" "policy" {
+  name        = "test-policy"
+  description = "A test policy"
+   policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "ec2:Describe*",
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      },
+    ]
+  })
+}
+
+resource "aws_iam_user_policy_attachment" "test-attach" {
+  user       = aws_iam_user.user.name
+  policy_arn = aws_iam_policy.policy.arn
+}
+
+=======
+
